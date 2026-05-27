@@ -1,31 +1,47 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const TodoForm = () => {
   const [title, setTitle] = useState("");
+  const router = useRouter();
 
-  const handleAddTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAddTodo = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     e.preventDefault();
+
     if (!title.trim()) return;
 
-    await fetch("/api/todos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title }),
-    });
+    try {
+      const response = await fetch("/api/todos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title }),
+      });
 
-    setTitle("");
+      if (!response.ok) {
+        throw new Error("Failed to add todo");
+      }
 
+      setTitle("");
+
+      router.refresh();
+
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-col sm:flex-row gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
+        
         <div className="relative flex-1">
-          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-500 text-xs">
+          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-xs text-slate-500">
             ⌘
           </span>
 
@@ -45,6 +61,7 @@ const TodoForm = () => {
         >
           Add task
         </button>
+
       </div>
     </div>
   );

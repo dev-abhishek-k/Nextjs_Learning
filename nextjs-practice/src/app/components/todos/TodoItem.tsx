@@ -1,5 +1,5 @@
 "use client";
-
+import {useRouter} from "next/navigation";
 import React from "react";
 
 interface Todo {
@@ -14,6 +14,7 @@ interface TodoItemProps {
 }
 
 const TodoItem = ({ todo }: TodoItemProps) => {
+    const router = useRouter();
 
 const handleToggle = async () => {
   try {
@@ -28,7 +29,7 @@ const handleToggle = async () => {
       }),
     });
 
-    window.location.reload();
+        router.refresh();
 
   } catch (error) {
     console.log(error);
@@ -38,6 +39,7 @@ const handleToggle = async () => {
 
 
   const handleDelete = async () => {
+    
     try {
       await fetch(`/api/todos/${todo.id}`,{
         method: "DELETE",
@@ -47,7 +49,7 @@ const handleToggle = async () => {
      
       });
 
-      window.location.reload();
+        router.refresh();
     } catch (error) {
       console.log(error);
     }
